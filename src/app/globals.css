@@ -5,12 +5,9 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+html { overscroll-behavior: none; }      /* prevents white overscroll chain on most browsers */
+
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -18,6 +15,7 @@
     --foreground: #ededed;
   }
 }
+
 
 body {
   background: var(--background);
