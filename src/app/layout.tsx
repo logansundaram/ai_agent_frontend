@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/navbar";
-import Link from "next/link";
+import Sidebar from "./components/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +29,13 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <div className="bg-gradient-to-tl from-pink-200 via-violet-200 to-blue-200 min-h-screen">
           <div className="flex-col text-xl font-mono">
-              <div className="space-y-5">
-                <div className="flex justify-center p-4">
-                  <Link className="fixed" href="/">Jarvis.ai</Link> 
-                </div>
-                <div className="flex justify-center">
-                  <Navbar/>
-                </div>
+              <div className="flex justify-center">
+                <Sidebar/>
               </div>
-            </div>
-          {children}
+          </div>
+          <main className="pl-35">
+            {children}
+          </main>
         </div>
       </body>
     </html>
