@@ -32,16 +32,16 @@ export default function Page() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const resp = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "llama3.1:8b",
+   const resp = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        // omit model so the backend uses process.env.OLLAMA_MODEL
         messages: messages
-          .concat(userMsg)
-          .map((m) => ({ role: m.role, content: m.text })),
-      }),
-      signal: controller.signal,
+        .concat(userMsg)
+        .map((m) => ({ role: m.role, content: m.text })),
+    }),
+    signal: controller.signal,
     });
 
     if (!resp.ok || !resp.body) {
