@@ -205,11 +205,151 @@ export function ModelCarousel({
   );
 }
 
+/* ===== Mini models grid (glassy, hover lift, with buttons) ===== */
+
+function ModelMiniCard({
+  m,
+  onConfigure,
+  onBenchmark,
+  onDetails,
+}: {
+  m: ModelCardData;
+  onConfigure?: (m: ModelCardData) => void;
+  onBenchmark?: (m: ModelCardData) => void;
+  onDetails?: (m: ModelCardData) => void;
+}) {
+  return (
+    <div
+      className={[
+        "rounded-2xl border border-black/10 bg-white/60 backdrop-blur-sm p-5",
+        "shadow-sm transition-all transform-gpu",
+        "hover:shadow-md hover:-translate-y-0.5",
+      ].join(" ")}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="font-semibold text-black">{m.title}</div>
+        {m.tag && (
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-black/10 text-black/80">
+            {m.tag}
+          </span>
+        )}
+      </div>
+      {m.subtitle && <p className="text-sm text-black/70 mt-1">{m.subtitle}</p>}
+      {m.location && <div className="text-xs text-black/60 mt-2">Location: {m.location}</div>}
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <button
+          onClick={() => onConfigure?.(m)}
+          className="rounded-2xl bg-black text-white text-sm py-2 font-medium hover:opacity-90 transition"
+        >
+          Configure
+        </button>
+        <button
+          onClick={() => onBenchmark?.(m)}
+          className="rounded-2xl bg-black/10 text-sm py-2 font-medium hover:bg-black/15 transition"
+        >
+          Benchmark
+        </button>
+        <button
+          onClick={() => onDetails?.(m)}
+          className="rounded-2xl bg-black/10 text-sm py-2 font-medium hover:bg-black/15 transition"
+        >
+          Details
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ModelsGrid({
+  items,
+  preselect,
+}: {
+  items: ModelCardData[];
+  preselect?: string | null;
+}) {
+  const [q, setQ] = useState("");
+  const tags = Array.from(new Set(items.map((i) => i.tag).filter(Boolean))) as string[];
+  const [tag, setTag] = useState<string>(preselect ?? "");
+
+  useEffect(() => {
+    if (preselect) setTag("");
+  }, [preselect]);
+
+  const filtered = items.filter((i) => {
+    const hitQ =
+      !q ||
+      (i.title + " " + (i.subtitle ?? "") + " " + (i.location ?? "") + " " + (i.tag ?? ""))
+        .toLowerCase()
+        .includes(q.toLowerCase());
+    const hitTag = !tag || i.tag === tag;
+    return hitQ && hitTag;
+  });
+
+  // demo handlers (swap for real actions)
+  const handleConfigure = (m: ModelCardData) => console.log("configure", m.id);
+  const handleBenchmark = (m: ModelCardData) => console.log("benchmark", m.id);
+  const handleDetails = (m: ModelCardData) => console.log("details", m.id);
+
+  return (
+    <section className="w-full space-y-4">
+      <div className="flex items-center gap-3">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search models…"
+          className="rounded-2xl border border-black/10 bg-white/50 backdrop-blur-sm px-3 py-1.5 text-sm outline-none"
+        />
+        <select
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+          className="rounded-2xl border border-black/10 bg-white/50 backdrop-blur-sm px-3 py-1.5 text-sm"
+        >
+          <option value="">All tags</option>
+          {tags.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 2 columns */}
+      <div className="grid gap-5 w-full sm:grid-cols-2">
+        {filtered.map((m) => (
+          <ModelMiniCard
+            key={m.id}
+            m={m}
+            onConfigure={handleConfigure}
+            onBenchmark={handleBenchmark}
+            onDetails={handleDetails}
+          />
+        ))}
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="text-black/60 text-sm">No models match your filters.</div>
+      )}
+    </section>
+  );
+}
+
 export default function Page() {
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+
   return (
     <div className="font-mono flex flex-col items-center p-[10%] space-y-8 w-full">
       <h1 className="text-left w-full font-medium text-xl">Models</h1>
-      <ModelCarousel items={demoModels} />
+
+      <ModelCarousel
+        items={demoModels}
+        onChange={(m) => setSelectedTitle(m.title)}
+      />
+
+      {/* New models grid (glassy mini cards with actions) */}
+      <div className="w-full">
+        <ModelsGrid items={demoModels} preselect={selectedTitle} />
+      </div>
     </div>
   );
 }

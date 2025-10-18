@@ -12,6 +12,7 @@ export default function Sidebar(){
             <NavbarButton title="models"/>
             <NavbarButton title="tools"/>
             <NavbarButton title="history"/>
+            <NavbarButton title="workflow"/>
         </div>
     );
 }
