@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion, type Variants, type Transition } from "framer-motion";
 import { Play, Settings2, BookOpenText } from "lucide-react";
 
 type ToolKind = "LOCAL" | "API";
@@ -58,6 +59,34 @@ const TOOLING: ToolDef[] = [
     status: "degraded",
   },
 ];
+
+/* ========= Animations (left -> right) ========= */
+const listVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const CARD_SPRING: Transition = {
+  type: "spring",
+  stiffness: 420,
+  damping: 28,
+  mass: 0.6,
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, x: -28 }, // start slightly to the left
+  show: {
+    opacity: 1,
+    x: 0, // travel right into place
+    transition: CARD_SPRING,
+  },
+};
 
 function Badge({
   children,
@@ -203,18 +232,24 @@ export default function Page() {
         </select>
       </div>
 
-      {/* Tool Cards */}
-      <div className="grid gap-5 w-full sm:grid-cols-2 lg:grid-cols-3">
+      {/* Tool Cards (animated left -> right) */}
+      <motion.div
+        className="grid gap-5 w-full sm:grid-cols-2 lg:grid-cols-3"
+        variants={listVariants}
+        initial="hidden"
+        animate="show"
+      >
         {tools.map((t) => (
-          <ToolCard
-            key={t.id}
-            t={t}
-            onRun={() => console.log("Run tool:", t.id)}
-            onConfigure={() => console.log("Configure tool:", t.id)}
-            onDocs={() => console.log("Open docs:", t.id)}
-          />
+          <motion.div key={t.id} variants={cardVariants}>
+            <ToolCard
+              t={t}
+              onRun={() => console.log("Run tool:", t.id)}
+              onConfigure={() => console.log("Configure tool:", t.id)}
+              onDocs={() => console.log("Open docs:", t.id)}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {tools.length === 0 && (
         <div className="text-black/60 text-sm mt-4">No tools match your filters.</div>

@@ -338,7 +338,7 @@ export default function Page() {
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
 
   return (
-    <div className="font-mono flex flex-col items-center p-[10%] space-y-8 w-full">
+    <div className="font-mono flex flex-col items-center p-[10%] space-y-8 w-full overflow-hidden">
       <h1 className="text-left w-full font-medium text-xl">Models</h1>
 
       <ModelCarousel

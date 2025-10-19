@@ -1,7 +1,36 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion, type Variants, type Transition } from "framer-motion";
 import { ArrowRight, Play, Download, Trash2, Clock, Filter } from "lucide-react";
+
+/** Animation variants (typed) */
+const listVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const CARD_SPRING: Transition = {
+  type: "spring",
+  stiffness: 420,
+  damping: 28,
+  mass: 0.6,
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: -28 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: CARD_SPRING,
+  },
+};
 
 type HistoryItem = {
   id: string;
@@ -212,19 +241,25 @@ export default function Page() {
         </select>
       </div>
 
-      {/* Cards */}
-      <div className="grid w-full gap-5">
+      {/* Cards (animated) */}
+      <motion.div
+        className="grid w-full gap-5"
+        variants={listVariants}
+        initial="hidden"
+        animate="show"
+      >
         {items.map((h) => (
-          <HistoryCard
-            key={h.id}
-            item={h}
-            onOpen={() => console.log("open", h.id)}
-            onResume={() => console.log("resume", h.id)}
-            onExport={() => console.log("export", h.id)}
-            onDelete={() => console.log("delete", h.id)}
-          />
+          <motion.div key={h.id} variants={cardVariants}>
+            <HistoryCard
+              item={h}
+              onOpen={() => console.log("open", h.id)}
+              onResume={() => console.log("resume", h.id)}
+              onExport={() => console.log("export", h.id)}
+              onDelete={() => console.log("delete", h.id)}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {items.length === 0 && (
         <div className="text-black/60 text-sm mt-4">No sessions match your filters.</div>
