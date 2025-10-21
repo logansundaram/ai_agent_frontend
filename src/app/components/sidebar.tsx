@@ -13,6 +13,7 @@ export default function Sidebar(){
             <NavbarButton title="tools"/>
             <NavbarButton title="history"/>
             <NavbarButton title="workflow"/>
+            <NavbarButton title="testing"/>
         </div>
     );
 }

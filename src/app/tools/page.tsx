@@ -80,14 +80,15 @@ const CARD_SPRING: Transition = {
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, x: -28 }, // start slightly to the left
+  hidden: { opacity: 0, x: -28 },
   show: {
     opacity: 1,
-    x: 0, // travel right into place
+    x: 0,
     transition: CARD_SPRING,
   },
 };
 
+/* ========= Badge ========= */
 function Badge({
   children,
   tone,
@@ -110,6 +111,7 @@ function Badge({
   );
 }
 
+/* ========= Tool Card (Uniform Height) ========= */
 function ToolCard({
   t,
   onRun,
@@ -127,30 +129,37 @@ function ToolCard({
   return (
     <div
       className={[
+        "h-full flex flex-col", // ensures uniform card height
         "rounded-3xl border border-black/10 bg-white/60 backdrop-blur-sm",
         "shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5",
-        "p-5 grid gap-3 w-full",
+        "p-5 w-full min-h-[260px]",
       ].join(" ")}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="grid gap-1">
-          <div className="text-lg font-semibold">{t.name}</div>
-          <p className="text-sm text-black/70 leading-relaxed">{t.summary}</p>
-          <div className="text-xs text-black/60">Model: {t.model}</div>
+      {/* Top content */}
+      <div className="flex-1">
+        <div className="flex items-start justify-between gap-4">
+          <div className="grid gap-1">
+            <div className="text-lg font-semibold">{t.name}</div>
+            <p className="text-sm text-black/70 leading-relaxed overflow-hidden max-h-[72px]">
+              {t.summary}
+            </p>
+            <div className="text-xs text-black/60">Model: {t.model}</div>
+          </div>
+          <div className="grid gap-2 justify-items-end">
+            <Badge tone={t.kind === "LOCAL" ? "green" : "neutral"}>{t.kind}</Badge>
+            {t.status && <Badge tone={statusTone as any}>{t.status}</Badge>}
+          </div>
         </div>
-        <div className="grid gap-2 justify-items-end">
-          <Badge tone={t.kind === "LOCAL" ? "green" : "neutral"}>{t.kind}</Badge>
-          {t.status && <Badge tone={statusTone as any}>{t.status}</Badge>}
+
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          {t.tags.map((tag) => (
+            <Badge key={tag}>{tag}</Badge>
+          ))}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        {t.tags.map((tag) => (
-          <Badge key={tag}>{tag}</Badge>
-        ))}
-      </div>
-
-      <div className="flex gap-2 pt-1">
+      {/* Bottom buttons */}
+      <div className="flex gap-2 pt-3 mt-3">
         <button
           onClick={onRun}
           className="inline-flex items-center gap-2 rounded-2xl bg-black text-white text-sm px-3 py-2 hover:opacity-90 transition"
@@ -177,6 +186,7 @@ function ToolCard({
   );
 }
 
+/* ========= Page ========= */
 export default function Page() {
   const [q, setQ] = useState("");
   const [kind, setKind] = useState<"ALL" | ToolKind>("ALL");
@@ -240,7 +250,7 @@ export default function Page() {
         animate="show"
       >
         {tools.map((t) => (
-          <motion.div key={t.id} variants={cardVariants}>
+          <motion.div key={t.id} variants={cardVariants} className="h-full">
             <ToolCard
               t={t}
               onRun={() => console.log("Run tool:", t.id)}

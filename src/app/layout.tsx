@@ -27,13 +27,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="bg-gradient-to-tl from-pink-200 via-violet-200 to-blue-200 min-h-screen">
+        <div className="bg-gradient-to-tl from-pink-200 via-violet-200 to-blue-200 min-h-screen font-mono">
           <div className="flex-col text-xl font-mono">
               <div className="flex justify-center">
                 <Sidebar/>
               </div>
           </div>
-          <main className="pl-35">
+          <main className="pl-35 font-mono">
             {children}
           </main>
         </div>
