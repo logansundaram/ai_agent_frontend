@@ -1,6 +1,8 @@
+"use client";
+
 import { ArrowRight, Play, Download, Trash2, Clock, Filter, Star, Book, Cog } from "lucide-react";
 import Button_Primary from "../components/button";
-
+import ActiveLink from "../components/activelink";
 
 export default function Page(){
 
@@ -9,6 +11,8 @@ export default function Page(){
 
   return (
   <div className="justify-center flex flex-col w-full h-min-screen p-10 space-y-10 space-x-10">
+
+    <ActiveLink href="/testing/testing_routing">Go to nested test page</ActiveLink>
 
 
       <button className="rounded-2xl bg-black/20 text-black text-xs p-2 font-medium hover:bg-black/30 transition flex justify-center items-center w-min">
