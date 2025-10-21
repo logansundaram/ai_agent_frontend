@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, FormEvent } from "react";
+import { useState, useRef, useEffect, ChangeEvent, FormEvent } from "react";
 import Message from "../components/message";
 
 interface Msg {
@@ -14,34 +14,41 @@ export default function Page() {
   const [inputValue, setInputValue] = useState<string>("");
   const abortRef = useRef<AbortController | null>(null);
 
+  // ---- autoscroll target (after the last message)
+  const endRef = useRef<HTMLDivElement | null>(null);
+  const scrollToEnd = (smooth = true) => {
+    endRef.current?.scrollIntoView({
+      behavior: smooth ? "smooth" : "instant",
+      block: "end",
+    });
+  };
+  useEffect(() => scrollToEnd(), [messages]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const userText = inputValue.trim();
     if (!userText) return;
 
-    // Add user message
     const userMsg: Msg = { id: Date.now().toString(), role: "user", text: userText };
     setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
 
-    // Add placeholder assistant message
     const assistId = `${userMsg.id}-assistant`;
     setMessages((prev) => [...prev, { id: assistId, role: "assistant", text: "" }]);
 
-    // Send to backend
     const controller = new AbortController();
     abortRef.current = controller;
 
-   const resp = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        // omit model so the backend uses process.env.OLLAMA_MODEL
-        messages: messages
-        .concat(userMsg)
-        .map((m) => ({ role: m.role, content: m.text })),
-    }),
-    signal: controller.signal,
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: messages.concat(userMsg).map((m) => ({
+          role: m.role,
+          content: m.text,
+        })),
+      }),
+      signal: controller.signal,
     });
 
     if (!resp.ok || !resp.body) {
@@ -51,7 +58,6 @@ export default function Page() {
       return;
     }
 
-    // Stream in NDJSON chunks
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
@@ -86,22 +92,31 @@ export default function Page() {
 
   return (
     <main className="flex flex-col font-mono min-h-screen">
-      <div className="flex flex-col space-y-10 pl-60 pt-10">
+      {/* Messages */}
+      <div className="flex flex-col space-y-6 pl-60 pt-10 pb-40">
         {messages.length === 0 ? (
-          <p>write first message to begin</p>
+          <p className="text-black/60">write first message to begin</p>
         ) : (
-          messages.map((m) => <Message key={m.id} query={m.text} />)
+          messages.map((m) => (
+            <div
+              key={m.id}
+              className={`flex ${
+                m.role === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              {/* keep isUser to style bubble; alignment handled by wrapper */}
+              <Message query={m.text} isUser={m.role === "user"} />
+            </div>
+          ))
         )}
+        <div ref={endRef} />
       </div>
 
-      <div className="fixed bottom-4 inset-x-0 flex justify-center px-4 pl-35">
-        <div className="w-full max-w-2xl">
-          <div className="mb-2 text-left text-sm font-medium text-slate-600">
-            get some work done
-          </div>
-
+      {/* Floating input bar (wider) */}
+      <div className="fixed bottom-6 left-0 right-0 flex justify-center z-50 pointer-events-none">
+        <div className="pl-60 w-full max-w-3xl pointer-events-auto">
           <form onSubmit={handleSubmit}>
-            <div className="flex items-center gap-2 rounded-full border border-black/20 bg-white/80 backdrop-blur shadow-lg px-4 py-2">
+            <div className="flex items-center gap-2 rounded-full border border-black/20 bg-white/80 dark:bg-black/60 backdrop-blur-lg shadow-xl px-5 py-3">
               <input
                 type="text"
                 value={inputValue}
@@ -111,13 +126,12 @@ export default function Page() {
               />
               <input
                 type="submit"
-                className="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium bg-black text-white hover:bg-blue-400"
+                className="shrink-0 rounded-full px-4 py-2 text-sm font-medium bg-black text-white hover:bg-blue-400 transition"
                 value="Send"
               />
             </div>
           </form>
-
-          <div className="mt-2 text-center text-xs text-slate-500">
+          <div className="mt-2 text-left text-xs text-slate-500 pl-2">
             saturday can be wrong. review all info as necessary
           </div>
         </div>

@@ -1,15 +1,19 @@
 interface MessageProp{
-    query : string;
-}
+  query: string;
+  isUser?: boolean;
+};
 
-export default function Message({query} : MessageProp){
-    return (
-        <div className="flex flex-col items-end">
-            <div className="text-black border-1 border-black bg-white/30 backdrop-blur shadow-lg p-4 rounded-xl mr-10">
-                <div>
-                    {query}
-                </div>
-            </div>
-        </div>
-    );
+export default function Message({ query, isUser = false }: MessageProp) {
+  return (
+    <div
+      className={[
+        "max-w-[60ch] rounded-2xl px-4 py-3",
+        isUser
+          ? "bg-white/70 backdrop-blur border border-black/10 text-black"
+          : "bg-black text-white"
+      ].join(" ")}
+    >
+      {query}
+    </div>
+  );
 }

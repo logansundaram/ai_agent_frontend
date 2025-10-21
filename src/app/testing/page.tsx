@@ -17,6 +17,8 @@ export default function Page(){
 
       
             <Button_Primary name="Bunch" icon={Book}/>
+            <Button_Primary name="Bunch" primary={true}/>
+
         
 
 
