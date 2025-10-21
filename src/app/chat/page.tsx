@@ -14,7 +14,6 @@ export default function Page() {
   const [inputValue, setInputValue] = useState<string>("");
   const abortRef = useRef<AbortController | null>(null);
 
-  // ---- autoscroll target (after the last message)
   const endRef = useRef<HTMLDivElement | null>(null);
   const scrollToEnd = (smooth = true) => {
     endRef.current?.scrollIntoView({
@@ -93,7 +92,7 @@ export default function Page() {
   return (
     <main className="flex flex-col font-mono min-h-screen">
       {/* Messages */}
-      <div className="flex flex-col space-y-6 pl-60 pt-10 pb-40">
+      <div className="flex flex-col space-y-6 pl-32 pr-6 pt-10 pb-40">
         {messages.length === 0 ? (
           <p className="text-black/60">write first message to begin</p>
         ) : (
@@ -104,7 +103,6 @@ export default function Page() {
                 m.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              {/* keep isUser to style bubble; alignment handled by wrapper */}
               <Message query={m.text} isUser={m.role === "user"} />
             </div>
           ))
@@ -112,11 +110,11 @@ export default function Page() {
         <div ref={endRef} />
       </div>
 
-      {/* Floating input bar (wider) */}
+      {/* Floating input bar */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-50 pointer-events-none">
-        <div className="pl-60 w-full max-w-3xl pointer-events-auto">
+        <div className="pl-32 pr-6 w-full max-w-4xl pointer-events-auto">
           <form onSubmit={handleSubmit}>
-            <div className="flex items-center gap-2 rounded-full border border-black/20 bg-white/80 dark:bg-black/60 backdrop-blur-lg shadow-xl px-5 py-3">
+            <div className="flex items-center gap-2 rounded-full border border-black/20 bg-white/80 dark:bg-black/60 backdrop-blur-lg shadow-xl px-6 py-3">
               <input
                 type="text"
                 value={inputValue}
@@ -126,7 +124,7 @@ export default function Page() {
               />
               <input
                 type="submit"
-                className="shrink-0 rounded-full px-4 py-2 text-sm font-medium bg-black text-white hover:bg-blue-400 transition"
+                className="shrink-0 rounded-full px-5 py-2 text-sm font-medium bg-black text-white hover:bg-blue-400 transition"
                 value="Send"
               />
             </div>
