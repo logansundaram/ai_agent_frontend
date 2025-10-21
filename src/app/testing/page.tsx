@@ -1,8 +1,12 @@
 import { ArrowRight, Play, Download, Trash2, Clock, Filter, Star, Book, Cog } from "lucide-react";
-import Button_Primary from "../components/button_primary";
+import Button_Primary from "../components/button";
 
 
 export default function Page(){
+
+
+
+
   return (
   <div className="justify-center flex flex-col w-full h-min-screen p-10 space-y-10 space-x-10">
 
@@ -10,8 +14,10 @@ export default function Page(){
       <button className="rounded-2xl bg-black/20 text-black text-xs p-2 font-medium hover:bg-black/30 transition flex justify-center items-center w-min">
             <Cog className="p-1"/>Benchmark
       </button>
-            <Button_Primary name="Bunch"/>
-                        <Button_Primary primary={true} name="Bunch"/>
+
+      
+            <Button_Primary name="Bunch" icon={Book}/>
+        
 
 
         <div className={[
