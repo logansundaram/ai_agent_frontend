@@ -18,6 +18,7 @@ const demoModels: ModelCardData[] = [
   { id: "deepseek-r1-32b", title: "DeepSeek-R1 32B", subtitle: "Reasoning • 128k ctx", tag: "REASONING", location: "API • Cloud" },
   { id: "phi-4-mini", title: "Phi-4 Mini", subtitle: "Compact • 4k ctx", tag: "FAST", location: "CPU • Local" },
   { id: "qwen2.5-coder", title: "Qwen2.5 Coder", subtitle: "Code • 32k ctx", tag: "CODE", location: "API • Cloud" },
+  { id: "gpt-oss", title: "GPT-oss 20b", subtitle: "Code • 32k ctx", tag: "CODE", location: "API • Local" },
 ];
 
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
